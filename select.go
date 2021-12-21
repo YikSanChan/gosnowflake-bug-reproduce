@@ -1,7 +1,3 @@
-// Example: Fetch one row.
-//
-// No cancel is allowed as no context is specified in the method call Query(). If you want to capture Ctrl+C to cancel
-// the query, specify the context and use QueryContext() instead. See selectmany for example.
 package main
 
 import (
@@ -19,6 +15,7 @@ func getDSN() (string, *sf.Config, error) {
 		Account:  os.Getenv("SNOWFLAKE_TEST_ACCOUNT"),
 		User:     os.Getenv("SNOWFLAKE_TEST_USER"),
 		Password: os.Getenv("SNOWFLAKE_TEST_PASSWORD"),
+		Database: "snowflake_sample_data",
 	}
 	dsn, err := sf.DSN(cfg)
 	return dsn, cfg, err
@@ -35,25 +32,37 @@ func main() {
 		log.Fatalf("failed to connect. %v, err: %v", dsn, err)
 	}
 	defer db.Close()
-	query := "SELECT 1"
+	query := "SELECT * FROM tpch_sf1.customer limit 1"
 	rows, err := db.Query(query) // no cancel is allowed
 	if err != nil {
 		log.Fatalf("failed to run a query. %v, err: %v", query, err)
 	}
 	defer rows.Close()
-	var v int
 	for rows.Next() {
-		err := rows.Scan(&v)
+		var custkey, name, address, nationkey, phone, acctbal, mktsegment, comment string
+		err = rows.Scan(&custkey, &name, &address, &nationkey, &phone, &acctbal, &mktsegment, &comment)
 		if err != nil {
 			log.Fatalf("failed to get result. err: %v", err)
 		}
-		if v != 1 {
-			log.Fatalf("failed to get 1. got: %v", v)
-		}
+		// 60001 string
+		// Customer#000060001 string
+		// 9Ii4zQn9cX string
+		// 14 string
+		// 24-678-784-9652 string
+		// 9957.560000 string
+		// HOUSEHOLD string
+		// l theodolites boost slyly at the platelets: permanently ironic packages wake slyly pend string
+		fmt.Printf("%+v %T\n", custkey, custkey)
+		fmt.Printf("%+v %T\n", name, name)
+		fmt.Printf("%+v %T\n", address, address)
+		fmt.Printf("%+v %T\n", nationkey, nationkey)
+		fmt.Printf("%+v %T\n", phone, phone)
+		fmt.Printf("%+v %T\n", acctbal, acctbal)
+		fmt.Printf("%+v %T\n", mktsegment, mktsegment)
+		fmt.Printf("%+v %T\n", comment, comment)
 	}
 	if rows.Err() != nil {
 		fmt.Printf("ERROR: %v\n", rows.Err())
 		return
 	}
-	fmt.Printf("Congrats! You have successfully run %v with Snowflake DB!\n", query)
 }
