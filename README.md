@@ -1,5 +1,5 @@
-Run `go build .` to build.
+Reproducible code for [gosnowflake issue](https://github.com/snowflakedb/gosnowflake/issues/517).
 
-Then run `./gosnowflake-bug-reproduce` to reproduce the bug.
+Run `go build .` to build. Then run `./gosnowflake-bug-reproduce` to reproduce the bug.
 
 Note: make sure env vars `SNOWFLAKE_TEST_ACCOUNT`, `SNOWFLAKE_TEST_USER` and `SNOWFLAKE_TEST_PASSWORD` are configured correctly.
