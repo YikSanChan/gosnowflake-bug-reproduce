@@ -39,7 +39,7 @@ func main() {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var custkey, name, address, nationkey, phone, acctbal, mktsegment, comment string
+		var custkey, name, address, nationkey, phone, acctbal, mktsegment, comment interface{}
 		err = rows.Scan(&custkey, &name, &address, &nationkey, &phone, &acctbal, &mktsegment, &comment)
 		if err != nil {
 			log.Fatalf("failed to get result. err: %v", err)
