@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/snowflakedb/gosnowflake"
 	sf "github.com/snowflakedb/gosnowflake"
 )
 
@@ -33,7 +35,7 @@ func main() {
 	}
 	defer db.Close()
 	query := "SELECT * FROM tpch_sf1.customer limit 1"
-	rows, err := db.Query(query) // no cancel is allowed
+	rows, err := db.QueryContext(gosnowflake.WithHigherPrecision(context.Background()), query) // no cancel is allowed
 	if err != nil {
 		log.Fatalf("failed to run a query. %v, err: %v", query, err)
 	}
@@ -44,12 +46,12 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to get result. err: %v", err)
 		}
-		// 60001 string
+		// 60001 int64
 		// Customer#000060001 string
 		// 9Ii4zQn9cX string
-		// 14 string
+		// 14 int64
 		// 24-678-784-9652 string
-		// 9957.560000 string
+		// +9957.56 *big.Float
 		// HOUSEHOLD string
 		// l theodolites boost slyly at the platelets: permanently ironic packages wake slyly pend string
 		fmt.Printf("%+v %T\n", custkey, custkey)
